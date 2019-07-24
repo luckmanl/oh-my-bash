@@ -168,14 +168,37 @@ fi
 #
 # Headers and Logging
 #
-_omb_log_header()    { printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"; }
-_omb_log_arrow()     { printf "➜ %s\n" "$@"; }
-_omb_log_success()   { printf "${green}✔ %s${reset}\n" "$@"; }
-_omb_log_error()     { printf "${red}✖ %s${reset}\n" "$@"; }
-_omb_log_warning()   { printf "${tan}➜ %s${reset}\n" "$@"; }
-_omb_log_underline() { printf "${underline}${bold}%s${reset}\n" "$@"; }
-_omb_log_bold()      { printf "${bold}%s${reset}\n" "$@"; }
-_omb_log_note()      { printf "${underline}${bold}${blue}Note:${reset}  ${yellow}%s${reset}\n" "$@"; }
+# Note: Define logging functions only when there are no existing
+# definitions so that the end user can customize the error handling.
+_omb_util_command_exists _omb_log_header ||
+  _omb_log_header()    { printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_arrow ||
+  _omb_log_arrow()     { printf "➜ %s\n" "$@"; }
+_omb_util_command_exists _omb_log_success ||
+  _omb_log_success()   { printf "${green}✔ %s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_error ||
+  _omb_log_error()     { printf "${red}✖ %s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_warning ||
+  _omb_log_warning()   { printf "${tan}➜ %s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_underline ||
+  _omb_log_underline() { printf "${underline}${bold}%s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_bold ||
+  _omb_log_bold()      { printf "${bold}%s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_note ||
+  _omb_log_note()      { printf "${underline}${bold}${blue}Note:${reset}  ${yellow}%s${reset}\n" "$@"; }
+_omb_util_command_exists _omb_log_info ||
+  _omb_log_info()      { printf "INFO: %s\n" "$1"; }
+_omb_util_command_exists _omb_log_die ||
+  _omb_log_die() {
+    local status=$1
+	  case $status in
+	  1) printf 'FATAL: %s\n' "$2"
+       exit "$status" ;;
+	  *) printf 'FATAL: Syntax error%s\n%s\n' "${FUNCNAME:+ in $FUNCNAME}" "$2"
+       ((status)) && printf 'FATAL: %s\n' "$status"
+       return "$status" ;;
+	  esac
+  }
 
 #
 # USAGE FOR SEEKING CONFIRMATION

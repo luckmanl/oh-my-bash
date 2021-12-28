@@ -189,16 +189,7 @@ _omb_util_command_exists _omb_log_note ||
 _omb_util_command_exists _omb_log_info ||
   _omb_log_info()      { printf "INFO: %s\n" "$1"; }
 _omb_util_command_exists _omb_log_die ||
-  _omb_log_die() {
-    local status=$1
-	  case $status in
-	  1) printf 'FATAL: %s\n' "$2"
-       exit "$status" ;;
-	  *) printf 'FATAL: Syntax error%s\n%s\n' "${FUNCNAME:+ in $FUNCNAME}" "$2"
-       ((status)) && printf 'FATAL: %s\n' "$status"
-       return "$status" ;;
-	  esac
-  }
+  _omb_log_die()       { printf 'FATAL: %s\n' "$2"; exit "$1"; }
 
 #
 # USAGE FOR SEEKING CONFIRMATION
